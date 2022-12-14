@@ -11,8 +11,8 @@ public interface ILogger
     {
         Empty,
         Debug,
-        Info,
         Message,
+        Info,
         Warning,
         Critical,
         Error
