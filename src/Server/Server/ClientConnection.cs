@@ -2,6 +2,7 @@
 
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 
 namespace TicTavUhhServer;
 
@@ -34,7 +35,7 @@ internal class ClientConnection
     internal ConnectionLevel connectionLevel { get; private set; }
 
     internal IPAddress ThisIPAddress { get; set; }
-    internal int hisPort { get; private set; }
+    internal int ThisPort { get; private set; }
     internal int ID { get; private set; }
 
 
@@ -50,7 +51,7 @@ internal class ClientConnection
     {
         connectionLevel = ConnectionLevel.Standby;
         ThisIPAddress = iPAddress;
-        hisPort = port;
+        ThisPort = port;
         this.ID = ID;
 
         if (bufferReadSize < 1)
@@ -58,22 +59,25 @@ internal class ClientConnection
         this.bufferReadSize = bufferReadSize;
     }
 
-    public void EstablishConnection()
+    public async Task EstablishConnection()
     {
         connectionLevel = ConnectionLevel.Connecting;
-        TcpListener listener = new TcpListener(ThisIPAddress, hisPort);
+        TcpListener listener = new TcpListener(ThisIPAddress, ThisPort);
+        //TcpListener listener = new TcpListener();
         listener.Start();
         while (client == null || !client.Connected)
-        {
-            client = listener.AcceptTcpClientAsync().Result;
+        {   
+            client = await listener.AcceptTcpClientAsync();
         }
+        stream = client.GetStream();
         connectionLevel = ConnectionLevel.Connected;
 
         Task DataReciverTask = new Task(DataReciver);
         DataReciverTask.Start();
+        listener.Stop();
     }
 
-    private void DataReciver()
+    private async void DataReciver()
     {
 Restart:
         byte[] buffer = new byte[bufferReadSize];
@@ -82,7 +86,7 @@ Restart:
         {
             while (client.Connected)
             {
-                stream.ReadAsync(buffer, 0, bufferReadSize);
+                await stream.ReadAsync(buffer, 0, bufferReadSize);
                 if (buffer[0] == 111)
                     stream.Write(ping);
                 else
@@ -91,8 +95,9 @@ Restart:
         }
         catch (Exception e)
         {
-            throw;
+
         }
+        connectionLevel = ConnectionLevel.Standby;
     }
 
     public int GetDataRecivedCount() => bufferlist.Count();
