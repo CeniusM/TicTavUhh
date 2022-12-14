@@ -94,9 +94,9 @@ Restart:
     public byte[] GetAllData()
     {
         byte[] buffer = this.bufferlist.
-            ToArray().
-            Reverse().
             ToArray();
+        //Reverse().
+        //ToArray();
 
         this.bufferlist.Clear();
         return buffer;
