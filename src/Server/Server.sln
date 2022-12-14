@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B93775DB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTavUhhServerTests", "..\..\tests\ServerTests\TicTavUhhServerTests\TicTavUhhServerTests.csproj", "{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerCMDGUI", "ServerCMDGUI\ServerCMDGUI.csproj", "{FDDA6DA5-1D62-4792-93C6-BC4415B040CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDDA6DA5-1D62-4792-93C6-BC4415B040CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDDA6DA5-1D62-4792-93C6-BC4415B040CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDDA6DA5-1D62-4792-93C6-BC4415B040CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDDA6DA5-1D62-4792-93C6-BC4415B040CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
