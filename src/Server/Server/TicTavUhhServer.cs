@@ -1,11 +1,13 @@
 ﻿
 
+using static TicTavUhhServer.ILogger;
+
 namespace TicTavUhhServer
 {
     public class Server
     {
         private ILogger logger;
-        public string GetNextLog => logger.GetLog();
+        public (string Message, LogWarningLevel WarningLevel) GetNextLog() => logger.GetLog();
 
         public Server() : this(new Logger()) { }
 
