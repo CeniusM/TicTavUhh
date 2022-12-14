@@ -6,6 +6,9 @@ namespace TicTavUhhServer
 {
     public class Server
     {
+        
+        public bool Running { get; private set; }
+
         private ILogger logger;
         public (string Message, LogWarningLevel WarningLevel) GetNextLog() => logger.GetLog();
 
