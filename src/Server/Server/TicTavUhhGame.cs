@@ -12,7 +12,7 @@ internal class TicTavUhhGame
 
     }
 
-    public void Play(Stream player1, Stream player2)
+    public void Play(ClientConnection player1, ClientConnection player2)
     {
         
     }
