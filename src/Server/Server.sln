@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTavUhhServer", "Server\TicTavUhhServer.csproj", "{620D6536-0B1C-4179-902A-1BD83D97FA19}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B93775DB-BF6E-4510-A23A-18D7AF04AF41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicTavUhhServerTests", "..\..\tests\ServerTests\TicTavUhhServerTests\TicTavUhhServerTests.csproj", "{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{620D6536-0B1C-4179-902A-1BD83D97FA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{620D6536-0B1C-4179-902A-1BD83D97FA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{620D6536-0B1C-4179-902A-1BD83D97FA19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6128850A-C8B0-4D95-A2DA-2E2C6D5A1619} = {B93775DB-BF6E-4510-A23A-18D7AF04AF41}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2630D928-6E65-4321-9BEB-282D6C1B1A09}
