@@ -37,14 +37,25 @@ internal class ClientConnection
     internal int hisPort { get; private set; }
     internal int ID { get; private set; }
 
-    private TcpClient? client = null;
 
-    public ClientConnection(IPAddress iPAddress, int port, int ID)
+    private TcpClient? client = null;
+    private NetworkStream? stream = null;
+
+    //private int bufferSize;
+    private int bufferReadSize;
+
+    private List<byte> bufferlist = new List<byte>();
+
+    public ClientConnection(IPAddress iPAddress, int port, int ID, int bufferReadSize = 1)
     {
         connectionLevel = ConnectionLevel.Standby;
         ThisIPAddress = iPAddress;
         hisPort = port;
         this.ID = ID;
+
+        if (bufferReadSize < 1)
+            bufferReadSize = 1;
+        this.bufferReadSize = bufferReadSize;
     }
 
     public void EstablishConnection()
@@ -57,18 +68,52 @@ internal class ClientConnection
             client = listener.AcceptTcpClientAsync().Result;
         }
         connectionLevel = ConnectionLevel.Connected;
+
+        Task DataReciverTask = new Task(DataReciver);
+        DataReciverTask.Start();
     }
 
-    public void SendData(List<byte> bytes) => SendData();
-        
-    public void SendData()
+    private void DataReciver()
     {
-        if (client.Connected)
+Restart:
+        byte[] buffer = new byte[bufferReadSize];
+        try
         {
-
+            while (client.Connected)
+            {
+                stream.ReadAsync(buffer, 0, bufferReadSize);
+                this.bufferlist.AddRange(buffer.Take(bufferReadSize));
+            }
         }
-        else
-            connectionLevel = ConnectionLevel.Paused;
+        catch (Exception e)
+        {
+            throw;
+        }
+    }
+
+    public byte[] GetAllData()
+    {
+        byte[] buffer = this.bufferlist.
+            ToArray().
+            Reverse().
+            ToArray();
+
+        this.bufferlist.Clear();
+        return buffer;
+    }
+
+    public void SendData(List<byte> bytes)
+    {
+        if (connectionLevel == ConnectionLevel.Connected)
+            SendData(bytes.ToArray());
+    }
+
+    public void SendData(byte[] data)
+    {
+        if (connectionLevel == ConnectionLevel.Connected)
+        {
+            stream.Write(data);
+        }
     }
 
     ~ClientConnection()
@@ -78,6 +123,10 @@ internal class ClientConnection
             if (client.Connected)
                 client.Close();
             client.Dispose();
+        }
+        if (stream is not null)
+        {
+            stream.Dispose();
         }
     }
 }
