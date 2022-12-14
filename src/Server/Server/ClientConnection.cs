@@ -77,12 +77,16 @@ internal class ClientConnection
     {
 Restart:
         byte[] buffer = new byte[bufferReadSize];
+        byte[] ping = new byte[1] { 111 };
         try
         {
             while (client.Connected)
             {
                 stream.ReadAsync(buffer, 0, bufferReadSize);
-                this.bufferlist.AddRange(buffer.Take(bufferReadSize));
+                if (buffer[0] == 111)
+                    stream.Write(ping);
+                else
+                    this.bufferlist.AddRange(buffer.Take(bufferReadSize));
             }
         }
         catch (Exception e)
@@ -90,6 +94,8 @@ Restart:
             throw;
         }
     }
+
+    public int GetDataRecivedCount() => bufferlist.Count();
 
     public byte[] GetAllData()
     {
