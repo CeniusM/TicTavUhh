@@ -23,7 +23,7 @@ public class Logger : ILogger
         if (logs.Count > 0)
             return logs.Dequeue();
         else
-            return ("", LogLevel.Empty);
+            return (string.Empty, LogLevel.Empty);
     }
 
     void ILogger.Log(string Message, LogLevel LogLevel)
