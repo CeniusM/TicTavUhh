@@ -9,9 +9,25 @@ internal class ClientConnection
 {
     internal enum ConnectionLevel
     {
+        /// <summary>
+        /// No connection and inactive
+        /// </summary>
         Standby,
+
+        /// <summary>
+        /// Currently listening for a client
+        /// </summary>
         Connecting,
+
+        /// <summary>
+        /// Paused is used for indicating if an allready established connection was lost,
+        /// and can try to reconnect, if it fails it can go back to standby
+        /// </summary>
         Paused,
+
+        /// <summary>
+        /// Indicates that a connecition is established with a client
+        /// </summary>
         Connected
     }
 
@@ -43,7 +59,17 @@ internal class ClientConnection
         connectionLevel = ConnectionLevel.Connected;
     }
 
+    public void SendData(List<byte> bytes) => SendData();
+        
+    public void SendData()
+    {
+        if (client.Connected)
+        {
 
+        }
+        else
+            connectionLevel = ConnectionLevel.Paused;
+    }
 
     ~ClientConnection()
     {
