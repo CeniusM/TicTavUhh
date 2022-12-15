@@ -1,3 +1,3 @@
-module serverclient.com/m
+module serverclient
 
 go 1.19

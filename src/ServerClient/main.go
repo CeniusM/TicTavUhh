@@ -1,11 +1,22 @@
 package main
 
+import (
+	"serverclient/game"
+)
+
 func main() {
 
-	conn := dialTCP()
+	/*conn := client.DialTCP()
 
-	sendToTCP(conn, 8)
+	client.SendToTCP(conn, 8)
 
-	received := receiveFromTCP(conn)
-	println("Received message:", string(received))
+	received := client.ReceiveFromTCP(conn)
+	println("Received message:", string(received))*/
+
+	state := game.GameState{}
+
+	state.Board[0][1] = game.Cross
+	state.Board[1][1] = game.Circle
+
+	state.DrawBoard()
 }

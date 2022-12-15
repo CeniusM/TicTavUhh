@@ -13,7 +13,7 @@ const (
 	TYPE = "tcp"
 )
 
-func dialTCP() *net.TCPConn {
+func DialTCP() *net.TCPConn {
 	tcpServer, err := net.ResolveTCPAddr(TYPE, HOST+":"+PORT)
 	if err != nil {
 		println("resolveTCPAddr failed:", err.Error())
@@ -29,7 +29,7 @@ func dialTCP() *net.TCPConn {
 	return conn
 }
 
-func sendToTCP(conn net.Conn, payload int32) {
+func SendToTCP(conn net.Conn, payload int32) {
 	buf := new(bytes.Buffer)
 	err := binary.Write(buf, binary.LittleEndian, payload)
 	buf.WriteTo(conn)
@@ -40,7 +40,7 @@ func sendToTCP(conn net.Conn, payload int32) {
 	}
 }
 
-func receiveFromTCP(conn net.Conn) []byte {
+func ReceiveFromTCP(conn net.Conn) []byte {
 	received := make([]byte, 1024)
 	_, err := conn.Read(received)
 	if err != nil {
