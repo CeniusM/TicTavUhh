@@ -77,6 +77,30 @@ internal class ClientConnection
         listener.Stop();
     }
 
+    public void EstablishConnection(TcpClient client)
+    {
+        if (!client.Connected)
+            return;
+        connectionLevel = ConnectionLevel.Connecting;
+        this.client = client;
+        stream = client.GetStream();
+        connectionLevel = ConnectionLevel.Connected;
+
+        Task DataReciverTask = new Task(DataReciver);
+        DataReciverTask.Start();
+    }
+
+    public void Disconect()
+    {
+        if (!client.Connected)
+            return;
+        connectionLevel = ConnectionLevel.Paused;
+
+        client.Close();
+
+        connectionLevel = ConnectionLevel.Standby;
+    }
+
     private async void DataReciver()
     {
 Restart:
@@ -86,11 +110,11 @@ Restart:
         {
             while (client.Connected)
             {
-                await stream.ReadAsync(buffer, 0, bufferReadSize);
+                int dataReadSize = await stream.ReadAsync(buffer, 0, bufferReadSize);
                 if (buffer[0] == 111)
                     stream.Write(ping);
                 else
-                    this.bufferlist.AddRange(buffer.Take(bufferReadSize));
+                    this.bufferlist.AddRange(buffer.Take(dataReadSize));
             }
         }
         catch (Exception e)
@@ -109,7 +133,7 @@ Restart:
         //Reverse().
         //ToArray();
 
-        this.bufferlist.Clear();
+        this.bufferlist.RemoveRange(0, buffer.Length);
         return buffer;
     }
 

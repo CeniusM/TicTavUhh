@@ -2,13 +2,17 @@
 
 using System.IO.Pipes;
 using System.Net;
+using System.Net.Sockets;
 using static TicTavUhhServer.ILogger;
+using System.Collections.Concurrent;
 
 namespace TicTavUhhServer
 {
     public class Server
     {
         private TicTavUhhGame[] Games = new TicTavUhhGame[1];
+
+        private ConcurrentQueue<TcpClient> avalibleClients = new ConcurrentQueue<TcpClient>();
 
         public bool Running { get; private set; }
         public bool StoppingServer { get; private set; }
@@ -39,9 +43,22 @@ namespace TicTavUhhServer
                 logger.Log("Starting Server", LogWarningLevel.Info);
                 Thread thread = new Thread(ServerLoop);
                 thread.Start();
+                Thread thread2 = new Thread(AcceptClientsLoop);
+                thread2.Start();
             }
             else
                 logger.Log("Attempt at starting an allready running server", LogWarningLevel.Info);
+        }
+
+        private void AcceptClientsLoop()
+        {
+            TcpListener listener = new TcpListener(PortUsed);
+            while (Running)
+            {
+                TcpClient client = listener.AcceptTcpClient();
+                avalibleClients.Enqueue(client);
+            }
+            listener.Stop();
         }
 
         private void ServerLoop()
@@ -72,9 +89,7 @@ namespace TicTavUhhServer
                     {
                         logger.Log("Starting Game: " + i, LogWarningLevel.Message);
                         game.gameState = TicTavUhhGame.GameState.StartingUp;
-                        //Task task = new Task(() => FindPlayersForGame(Games[i], i));
-                        //task.Start();
-                        FindPlayersForGame(Games[i], i);
+                        StartGame(Games[i], i);
                     }
                     else if (game.gameState == TicTavUhhGame.GameState.Running)
                     {
@@ -88,9 +103,9 @@ namespace TicTavUhhServer
             Running = false;
         }
 
-        private async void FindPlayersForGame(TicTavUhhGame game, int index)
+        private async void StartGame(TicTavUhhGame game, int index)
         {
-            logger.Log("Finding players", LogWarningLevel.Debug);
+            logger.Log("Adding players", LogWarningLevel.Debug);
 
             IPAddress adress = IPAddress.Parse(Util.GetLocalIPAddress());
 
@@ -98,17 +113,41 @@ namespace TicTavUhhServer
             ClientConnection player2 = new ClientConnection(adress, PortUsed, GetUnikID());
 
             logger.Log("Finding player 1", LogWarningLevel.Debug);
-            await player1.EstablishConnection();
+            while (true)
+            {
+                if (avalibleClients.TryDequeue(out var client))
+                {
+                    player1.EstablishConnection(client);
+                    if (player1.connectionLevel == ClientConnection.ConnectionLevel.Connected)
+                        break;
+                }
+                else
+                    Thread.Sleep(100);
+            }
             logger.Log("Game " + index + " Found player 1", LogWarningLevel.Debug);
-            await player2.EstablishConnection();
+            while (true)
+            {
+                if (avalibleClients.TryDequeue(out var client))
+                {
+                    player2.EstablishConnection(client);
+                    if (player2.connectionLevel == ClientConnection.ConnectionLevel.Connected)
+                        break;
+                }
+                else
+                    Thread.Sleep(100);
+            }
             logger.Log("Game " + index + " Found player 2", LogWarningLevel.Debug);
 
-            if (player1.connectionLevel == ClientConnection.ConnectionLevel.Connected)
-                if (player2.connectionLevel == ClientConnection.ConnectionLevel.Connected)
-                {
-                    logger.Log("Game " + index + " Started", LogWarningLevel.Info);
-                    game.Play(player1, player2);
-                }
+            if (player1.connectionLevel == ClientConnection.ConnectionLevel.Connected &&
+                player2.connectionLevel == ClientConnection.ConnectionLevel.Connected)
+            {
+                logger.Log("Game " + index + " Started", LogWarningLevel.Info);
+                game.Play(player1, player2);
+            }
+            else
+            {
+                player1.
+            }
         }
 
         private int GetUnikID()
