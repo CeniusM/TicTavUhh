@@ -146,7 +146,10 @@ namespace TicTavUhhServer
             }
             else
             {
-                player1.
+                // Should instead give back the active client, or just switch the bad one out
+
+                player1.Disconect();
+                player2.Disconect();
             }
         }
 
